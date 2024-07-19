@@ -9,7 +9,6 @@ Base = declarative_base()
 
 class Follower(Base):
     __tablename__ = 'Follower'  
-    id = Column(Integer, primary_key=True)
     user_from_id = Column(Integer, ForeignKey('User.id'), primary_key=True)
     user_to_id =  Column(Integer, ForeignKey('User.id'), primary_key=True)
 
