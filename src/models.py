@@ -8,23 +8,27 @@ from eralchemy2 import render_er
 Base = declarative_base()
 
 class Follower(Base):
-    __tablename__ = 'Follower'
-    # Here we define columns for the table person
-    # Notice that each column is also a normal Python instance attribute.   
+    __tablename__ = 'Follower'  
+    id = Column(Integer, primary_key=True)
     user_from_id = Column(Integer, ForeignKey('User.id'), primary_key=True)
     user_to_id =  Column(Integer, ForeignKey('User.id'), primary_key=True)
 
+    user_from = relationship('User', back_populates='following')
+    user_to = relationship('User', back_populates='folowers')
+
 class User(Base):
     __tablename__ = 'User'
-    # Here we define columns for the table address.
-    # Notice that each column is also a normal Python instance attribute.
     id = Column(Integer, primary_key=True)
     username = Column(String(50))
     firstname = Column(String(50))
     lastname = Column(String(50))
     email = Column(String(50))
-    follower = relationship('User', secondary='Follower', back_populates='User')
 
+    following = relationship('Follower', back_populates='user_from')
+    followers = relationship('Follower', back_populates='user_to')
+
+    comments= relationship('Comment', back_populates='user_comment')
+    posts = relationship('Post', back_populetes = 'user_post')
 
 class Comment(Base):
     __tablename__ = 'Comment'
@@ -33,14 +37,20 @@ class Comment(Base):
     author_id = Column(Integer, ForeignKey('User.id'))
     post_id = Column(Integer, ForeignKey('Post.id'))
 
+    user_comment = relationship('User', back_populates='comments')
+    post = relationship('Post', back_populates='coment')
+
 
 class Post(Base):
     __tablename__ = 'Post'
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey('User.id'))
 
+    user_post = relationship('User', back_populetes = 'posts')
+    coment = relationship('Comment', back_populates = 'post')
 
-    
+    media=relationship('Media', back_populates='post')
+
 
 class Media(Base):
     __tablename__= 'Media'
@@ -48,9 +58,9 @@ class Media(Base):
     type = Column (Enum)
     url = Column(String(50))
     post_id = Column(Integer, ForeignKey('Post.id'))
-  
-    
 
+    post=relationship('Post', back_populates='media')
+  
  
 ## Draw from SQLAlchemy base
 try:
